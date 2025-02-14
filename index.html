@@ -75,7 +75,7 @@
 
     <div class="footer">- JM Baldera @2025</div>
 
-    <script>
+<script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbwhEDrF8A5UWFu1MckDZ3P2QxCQjKDBCXO3gqIUsi93S1haGWS_eHOsizk-btbU4nxipQ/exec";
 
     function submitComment() {
@@ -100,12 +100,39 @@
                 alert("Message saved successfully!");
                 document.getElementById("nameBox").value = "";
                 document.getElementById("commentBox").value = "";
+                loadComments(); // Reload comments after submission
             } else {
                 alert("Error saving message: " + data.message);
             }
         })
         .catch(error => alert("Error saving message. Please try again."));
     }
+
+    function loadComments() {
+        fetch(scriptURL)
+        .then(response => response.json())
+        .then(data => {
+            let commentsDiv = document.getElementById("comments");
+            commentsDiv.innerHTML = "";
+
+            if (data.length === 0) {
+                commentsDiv.innerHTML = "<p>No messages yet.</p>";
+                return;
+            }
+
+            data.forEach(comment => {
+                let commentHTML = `<div class='comment'>
+                    <strong>${comment.name}:</strong> ${comment.message} 
+                    <br><small>${comment.time}</small>
+                </div>`;
+                commentsDiv.innerHTML += commentHTML;
+            });
+        })
+        .catch(error => console.error("Error loading messages:", error));
+    }
+
+    // Load comments when the page loads
+    window.onload = loadComments;
 </script>
 
 
