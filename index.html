@@ -60,6 +60,7 @@
                 <p></p>
                 <input type="text" id="nameBox" class="form-control mb-2" placeholder="Your name...">
                 <textarea id="commentBox" class="form-control mb-2" placeholder="Write your message..."></textarea>
+
                 <button class="btn btn-danger" onclick="submitComment()">Submit</button>
                 <br><br>
                 <p>RECENT MESSAGE</p>
@@ -69,68 +70,71 @@
                 <h2>God’s Love for Us</h2>
                 <p>❤️ Romans 5:8 – "But God demonstrates his own love for us in this: While we were still sinners, Christ died for us."</p>
                 <p>❤️ 1 John 4:9-10 – "This is how God showed his love among us: He sent his one and only Son into the world that we might live through him. This is love: not that we loved God, but that he loved us and sent his Son as an atoning sacrifice for our sins."</p>
+                
+                <h2>Love in Relationships</h2>
+                <p>💑 1 Corinthians 13:4-7 – "Love is patient, love is kind. It does not envy, it does not boast, it is not proud. It does not dishonor others, it is not self-seeking, it is not easily angered, it keeps no record of wrongs. Love does not delight in evil but rejoices with the truth. It always protects, always trusts, always hopes, always perseveres."</p>
+                <p>💑 Ephesians 5:25 – "Husbands, love your wives, just as Christ loved the church and gave himself up for her."</p>
+                <p>💑 Song of Solomon 8:7 – "Many waters cannot quench love; rivers cannot sweep it away."</p>
+                
+                <h2>Love for Others</h2>
+                <p>💖 John 13:34-35 – "A new command I give you: Love one another. As I have loved you, so you must love one another. By this everyone will know that you are my disciples, if you love one another."</p>
+                <p>💖 Colossians 3:14 – "And over all these virtues put on love, which binds them all together in perfect unity."</p>
+                <p>💖 1 John 4:19 – "We love because he first loved us."</p>
             </div>
         </div>
     </div>
 
     <div class="footer">- JM Baldera @2025</div>
 
-<script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwxIKZYz1_vz-_kM4z0GtKiBp8e3Zxds5goBKYVNLyV6Hz_mzEDsiGX-V8c1t3aDpr7lw/exec";
 
-
-function submitComment() {
-    let name = document.getElementById("nameBox").value.trim();
-    let message = document.getElementById("commentBox").value.trim();
-
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbyuRxSWwEKj2K0RumadNTGugWaYEHUwL1rNM_fbYojyRbWSdzrMScgW9XVYaxpSdvCSIQ/exec";
+    
+        function loadComments() {
+            fetch(scriptURL)
+                .then(response => response.json())
+                .then(messages => {
+                    let commentsDiv = document.getElementById("comments");
+                    commentsDiv.innerHTML = "";
+                    messages.forEach(msg => {
+                        let commentHTML = `<div class="comment">
+                            <strong>${msg.name}</strong> (${new Date(msg.time).toLocaleString()}):<br> ${msg.message}
+                        </div>`;
+                        commentsDiv.innerHTML += commentHTML;
+                    });
+                })
+                .catch(error => console.error("Error loading messages:", error));
+        }
+    
+        function submitComment() {
+    let name = document.getElementById("nameBox").value;  // Use "nameBox"
+    let message = document.getElementById("commentBox").value;  // Use "commentBox"
     if (!name || !message) {
-        alert("Please enter both name and message.");
+        alert("Please enter your name and message.");
         return;
     }
 
-    let data = { name: name, message: message };
-
     fetch(scriptURL, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, message })
     })
     .then(response => response.json())
     .then(data => {
         if (data.status === "success") {
-            alert("Message saved successfully!");
-            document.getElementById("nameBox").value = "";
-            document.getElementById("commentBox").value = "";
+            loadComments();
+            document.getElementById("nameBox").value = "";  // Clear input
+            document.getElementById("commentBox").value = "";  // Clear input
         } else {
-            alert("Error saving message: " + data.message);
+            console.error("Error submitting comment:", data.message);
         }
     })
-    .catch(error => alert("Error saving message. Please try again."));
+    .catch(error => console.error("Error submitting comment:", error));
 }
 
-
-// ✅ Fetch and Display Messages
-function loadComments() {
-    fetch(scriptURL)
-        .then(response => response.json())
-        .then(messages => {
-            let commentsDiv = document.getElementById("comments");
-            commentsDiv.innerHTML = ""; // Clear previous messages
-            messages.forEach(msg => {
-                let commentHTML = `<div class="comment">
-                    <strong>${msg.name}</strong> (${new Date(msg.time).toLocaleString()}):<br> ${msg.message}
-                </div>`;
-                commentsDiv.innerHTML += commentHTML;
-            });
-        })
-        .catch(error => console.error("Error loading messages:", error));
-}
-
-// Load messages on page load
-document.addEventListener("DOMContentLoaded", loadComments);
-</script>
+    
+        document.addEventListener("DOMContentLoaded", loadComments);
+    </script>
 
 
 
