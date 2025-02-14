@@ -79,7 +79,6 @@
     const scriptURL = "https://script.google.com/macros/s/AKfycbwLOsIPeajlYQ2nSkU3K8ulGI1bAy_-AM2X0dX5AEkve-XgyuxbagIoTa7WAhCeAy3saA/exec";
 
 
-
 function submitComment() {
     let name = document.getElementById("nameBox").value.trim();
     let message = document.getElementById("commentBox").value.trim();
@@ -93,7 +92,9 @@ function submitComment() {
 
     fetch(scriptURL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(data)
     })
     .then(response => response.json())
@@ -102,7 +103,6 @@ function submitComment() {
             alert("Message saved successfully!");
             document.getElementById("nameBox").value = "";
             document.getElementById("commentBox").value = "";
-            loadComments(); // Reload comments after posting
         } else {
             alert("Error saving message: " + data.message);
         }
