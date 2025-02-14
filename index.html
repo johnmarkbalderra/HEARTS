@@ -110,7 +110,8 @@ function submitComment() {
     .catch(error => alert("Error saving message. Please try again."));
 }
 
-// ✅ Function to Fetch and Display Messages
+
+// ✅ Fetch and Display Messages
 function loadComments() {
     fetch(scriptURL)
         .then(response => response.json())
@@ -127,7 +128,7 @@ function loadComments() {
         .catch(error => console.error("Error loading messages:", error));
 }
 
-// Load comments when the page loads
+// Load messages on page load
 document.addEventListener("DOMContentLoaded", loadComments);
 </script>
 
