@@ -78,61 +78,35 @@
 <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbzRz1UaD8QHQ5w22FqMXcn6JOCKudEAcl6NMhS-9fVJ3abnPq6zDgo56UVZkiSHGgXrLw/exec";
 
-    function submitComment() {
-        let name = document.getElementById("nameBox").value.trim();
-        let message = document.getElementById("commentBox").value.trim();
 
-        if (!name || !message) {
-            alert("Please enter both name and message.");
-            return;
+function submitComment() {
+    let name = document.getElementById("nameBox").value.trim();
+    let message = document.getElementById("commentBox").value.trim();
+
+    if (!name || !message) {
+        alert("Please enter both name and message.");
+        return;
+    }
+
+    let data = { name: name, message: message };
+
+    fetch(scriptURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert("Message saved successfully!");
+            document.getElementById("nameBox").value = "";
+            document.getElementById("commentBox").value = "";
+        } else {
+            alert("Error saving message: " + data.message);
         }
-
-        let data = { name: name, message: message };
-
-        fetch(scriptURL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Message saved successfully!");
-                document.getElementById("nameBox").value = "";
-                document.getElementById("commentBox").value = "";
-                loadComments(); // Reload comments after submission
-            } else {
-                alert("Error saving message: " + data.message);
-            }
-        })
-        .catch(error => alert("Error saving message. Please try again."));
-    }
-
-    function loadComments() {
-        fetch(scriptURL)
-        .then(response => response.json())
-        .then(data => {
-            let commentsDiv = document.getElementById("comments");
-            commentsDiv.innerHTML = "";
-
-            if (data.length === 0) {
-                commentsDiv.innerHTML = "<p>No messages yet.</p>";
-                return;
-            }
-
-            data.forEach(comment => {
-                let commentHTML = `<div class='comment'>
-                    <strong>${comment.name}:</strong> ${comment.message} 
-                    <br><small>${comment.time}</small>
-                </div>`;
-                commentsDiv.innerHTML += commentHTML;
-            });
-        })
-        .catch(error => console.error("Error loading messages:", error));
-    }
-
-    // Load comments when the page loads
-    window.onload = loadComments;
+    })
+    .catch(error => alert("Error saving message. Please check your network connection."));
+}
 </script>
 
 
