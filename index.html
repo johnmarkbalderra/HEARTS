@@ -57,21 +57,18 @@
     <div class="container container-custom">
         <div class="row">
             <div class="col-md-6 order-md-2 text-center">
+                <p></p>
                 <input type="text" id="nameBox" class="form-control mb-2" placeholder="Your name...">
                 <textarea id="commentBox" class="form-control mb-2" placeholder="Write your message..."></textarea>
                 <button class="btn btn-danger" onclick="submitComment()">Submit</button>
                 <br><br>
-                <p><strong>RECENT MESSAGES</strong></p>
+                <p>RECENT MESSAGE</p>
                 <div class="comments mt-3" id="comments"></div>
             </div>
             <div class="col-md-6 order-md-1">
                 <h2>God’s Love for Us</h2>
                 <p>❤️ Romans 5:8 – "But God demonstrates his own love for us in this: While we were still sinners, Christ died for us."</p>
                 <p>❤️ 1 John 4:9-10 – "This is how God showed his love among us: He sent his one and only Son into the world that we might live through him. This is love: not that we loved God, but that he loved us and sent his Son as an atoning sacrifice for our sins."</p>
-                <h2>Love in Relationships</h2>
-                <p>💑 1 Corinthians 13:4-7 – "Love is patient, love is kind. It does not envy, it does not boast, it is not proud. It does not dishonor others, it is not self-seeking, it is not easily angered, it keeps no record of wrongs. Love does not delight in evil but rejoices with the truth. It always protects, always trusts, always hopes, always perseveres."</p>
-                <p>💑 Ephesians 5:25 – "Husbands, love your wives, just as Christ loved the church and gave himself up for her."</p>
-                <p>💑 Song of Solomon 8:7 – "Many waters cannot quench love; rivers cannot sweep it away."</p>
             </div>
         </div>
     </div>
@@ -79,40 +76,38 @@
     <div class="footer">- JM Baldera @2025</div>
 
     <script>
-        async function displayComments() {
-            try {
-                const response = await fetch('comments.json');
-                if (!response.ok) throw new Error('Failed to load comments');
-                
-                const comments = await response.json();
-                document.getElementById('comments').innerHTML = comments.map(comment => 
-                    `<div class='comment'><strong>${comment.name}:</strong> ${comment.text} <br><small>${comment.time}</small></div>`
-                ).join('');
-            } catch (error) {
-                console.error('Error loading comments:', error);
-                document.getElementById('comments').innerHTML = "<p>Failed to load comments.</p>";
-            }
-        }
+        const SHEET_URL = "https://script.google.com/macros/s/AKfycbweTRaxCI-B2DUE6AFUypldtEAZzq2uQEk2cOBhaifWn3RC_4v8KI_jNLWR9JkrHJZRVw/exec"; // Replace with your Google Apps Script Web App URL
 
-        function submitComment() {
+        async function submitComment() {
             let name = document.getElementById('nameBox').value.trim();
             let text = document.getElementById('commentBox').value.trim();
             let time = new Date().toLocaleString();
 
-            if (!name || !text) {
-                alert("Please enter your name and message!");
-                return;
+            if (!name || !text) return;
+
+            let commentData = { name, message: text, time };
+
+            try {
+                let response = await fetch(SHEET_URL, {
+                    method: "POST",
+                    body: JSON.stringify(commentData),
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                if (response.ok) {
+                    alert("Your message has been saved!");
+                    document.getElementById('nameBox').value = '';
+                    document.getElementById('commentBox').value = '';
+                } else {
+                    alert("Failed to save message. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error saving message.");
             }
-
-            alert("Your message has been submitted! However, GitHub Pages does not allow automatic saving. Please ask the site owner to update comments.json.");
-            
-            document.getElementById('nameBox').value = '';
-            document.getElementById('commentBox').value = '';
         }
-
-        displayComments();
     </script>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
