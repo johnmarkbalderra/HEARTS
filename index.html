@@ -76,31 +76,38 @@
     <div class="footer">- JM Baldera @2025</div>
 
     <script>
-    const SHEET_URL = "https://script.google.com/macros/s/AKfycbyiH_9OISAFRwxcgE0Aq-svsSNaAjf2dLZDN5zSaLd4epl28uXctYOAlBxKg9D4Qlc4Xw/exec"; // Replace with your Web App URL
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyiH_9OISAFRwxcgE0Aq-svsSNaAjf2dLZDN5zSaLd4epl28uXctYOAlBxKg9D4Qlc4Xw/exec";
 
-    async function submitComment() {
+    function submitComment() {
         let name = document.getElementById("nameBox").value.trim();
-        let text = document.getElementById("commentBox").value.trim();
-        if (!name || !text) return alert("Please enter your name and message.");
+        let message = document.getElementById("commentBox").value.trim();
 
-        let data = { name, message: text };
-
-        try {
-            let response = await fetch(SHEET_URL, {
-                method: "POST",
-                mode: "no-cors", // To bypass CORS issue
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-
-            alert("Message saved successfully! Refresh to see it.");
-            document.getElementById("nameBox").value = "";
-            document.getElementById("commentBox").value = "";
-        } catch (error) {
-            alert("Error saving message: " + error.message);
+        if (!name || !message) {
+            alert("Please enter both name and message.");
+            return;
         }
+
+        let data = { name: name, message: message };
+
+        fetch(scriptURL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert("Message saved successfully!");
+                document.getElementById("nameBox").value = "";
+                document.getElementById("commentBox").value = "";
+            } else {
+                alert("Error saving message: " + data.message);
+            }
+        })
+        .catch(error => alert("Error saving message. Please try again."));
     }
 </script>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
